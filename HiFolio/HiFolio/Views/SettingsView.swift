@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  HiFolio
 //
-//  Created by Jugal Malpani on 12/23/23.
+//  Created by Ayush Malpani on 12/23/23.
 //
 
 import SwiftUI

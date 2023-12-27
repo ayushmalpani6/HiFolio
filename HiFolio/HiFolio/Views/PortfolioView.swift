@@ -2,7 +2,7 @@
 //  PortfolioView.swift
 //  HiFolio
 //
-//  Created by Jugal Malpani on 12/23/23.
+//  Created by Ayush Malpani on 12/23/23.
 //
 
 import SwiftUI
@@ -99,45 +99,6 @@ struct PortfolioView: View {
         .sheet(isPresented: $showSetupSheet, content: {
             SetupSheet(sections: $sections)
         })
-//        NavigationStack {
-//            ScrollView {
-//                NavigationLink {
-//                    Text("Background")
-//                } label: {
-//                    Text("Background")
-//                }
-//                
-//                NavigationLink {
-//                    Text("Achievements")
-//                } label: {
-//                    Text("Achievements")
-//                }
-//                
-//                NavigationLink {
-//                    Text("Athletics & Arts")
-//                } label: {
-//                    Text("Athletics & Arts")
-//                }
-//                
-//                NavigationLink {
-//                    Text("Clubs")
-//                } label: {
-//                    Text("Clubs")
-//                }
-//                
-//                NavigationLink {
-//                    Text("Community Service")
-//                } label: {
-//                    Text("Community Service")
-//                }
-//                
-//                NavigationLink {
-//                    Text("APs & Honors")
-//                } label : {
-//                    Text("APs & Honors")
-//                }
-//            }
-//        }
     }
 }
 
@@ -181,21 +142,6 @@ struct SetupSheet : View {
                 Divider()
             }
             Spacer()
-            
-//            HStack {
-//                Text("Bibble Babble")
-//                Spacer()
-//                Button {
-//                    x.toggle()
-//                } label: {
-//                    if x == false {
-//                        Image(systemName: "square")
-//                    } else {
-//                        Image(systemName: "checkmark.square")
-//                    }
-//                }
-//            }
-            
         }
     }
 }
