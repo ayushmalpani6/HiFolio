@@ -7,27 +7,26 @@
 
 import SwiftUI
 
-struct SectionItem: Identifiable {
+struct SectionTitle: Identifiable {
     var title: String
     var checked: Bool
     var id: String { title }
 }
 
-
-
 struct PortfolioView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
-    @State var sections: [SectionItem] = [
-        SectionItem(title: "About", checked: false),
-        SectionItem(title: "Education", checked: false),
-        SectionItem(title: "Awards & Honors", checked: false),
-        SectionItem(title: "Athletics", checked: false),
-        SectionItem(title: "Arts", checked: false),
-        SectionItem(title: "Clubs & Organizations", checked: false),
-        SectionItem(title: "Courses", checked: false),
-        SectionItem(title: "Projects", checked: false),
-        SectionItem(title: "Work Experience", checked: false)
+    @State var sections: [SectionTitle] = [
+        SectionTitle(title: "About", checked: false),
+        SectionTitle(title: "Education", checked: false),
+        SectionTitle(title: "Awards & Honors", checked: false),
+        SectionTitle(title: "Athletics", checked: false),
+        SectionTitle(title: "Arts", checked: false),
+        SectionTitle(title: "Clubs & Organizations", checked: false),
+        SectionTitle(title: "Courses", checked: false),
+        SectionTitle(title: "Projects", checked: false),
+        SectionTitle(title: "Community Service", checked: false),
+        SectionTitle(title: "Work Experience", checked: false)
     ]
     
     
@@ -104,7 +103,7 @@ struct PortfolioView: View {
 
 struct SetupSheet : View {
     @Environment(\.presentationMode) var presentationMode
-    @Binding var sections: [SectionItem]
+    @Binding var sections: [SectionTitle]
     
     var body: some View {
 
