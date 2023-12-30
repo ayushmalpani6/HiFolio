@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
         VStack {
@@ -45,6 +46,28 @@ struct SettingsView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .foregroundColor(.cyan)
             }
+            
+            Button{
+                isPresentingConfirm = true
+            } label: {
+                Text("DELETE ACCOUNT")
+                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                    .foregroundColor(.cyan)
+            }
+            .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                Button("Delete your Account?", role: .destructive) {
+                    viewModel.deleteData()
+                    viewModel.deleteAccount()
+                }
+            }
+//            Button {
+//                viewModel.deleteData()
+//                viewModel.deleteAccount()
+//            } label : {
+//                Text("DELETE ACCOUNT")
+//                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+//                    .foregroundStyle(.cyan)
+//            }
         }
     }
 }

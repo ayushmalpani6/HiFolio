@@ -17,7 +17,6 @@ struct PortfolioView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
     @State var sections: [SectionTitle] = [
-        SectionTitle(title: "About", checked: false),
         SectionTitle(title: "Education", checked: false),
         SectionTitle(title: "Awards & Honors", checked: false),
         SectionTitle(title: "Athletics", checked: false),
@@ -28,9 +27,20 @@ struct PortfolioView: View {
         SectionTitle(title: "Community Service", checked: false),
         SectionTitle(title: "Work Experience", checked: false)
     ]
-    
+    @State var showAddEducationEntryView: Bool = false
     
     var body: some View {
+        ZStack {
+            mainBody
+            
+            if showAddEducationEntryView {
+                addEducationEntryView
+            }
+        }
+    }
+    
+    
+    var mainBody: some View {
         ScrollView {
             VStack(alignment: .leading) {
                 HStack {
@@ -79,9 +89,22 @@ struct PortfolioView: View {
                     ForEach(sections) { section in
                         if section.checked {
                             DisclosureGroup(section.title) {
-                                Text("EDITABLE TEXT")
-                                    .padding(.vertical, 5)
-                                    .fontWeight(.light)
+                                VStack {
+                                    if viewModel.currentUserPortfolio != nil{
+                                        List() {
+                                            if viewModel.currentUserPortfolio != nil {
+                                                ForEach(viewModel.currentUserPortfolio!.education.entries) { entry in
+                                                    Text(entry.schoolName)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Button {
+                                        showAddEducationEntryView.toggle()
+                                    } label : {
+                                        Text("Edit")
+                                    }
+                                }
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 40)
@@ -92,6 +115,7 @@ struct PortfolioView: View {
                     }
                 }
                 .backgroundStyle(.white)
+
                 Spacer()
             }
         }
@@ -99,6 +123,76 @@ struct PortfolioView: View {
             SetupSheet(sections: $sections)
         })
     }
+    
+    @State var schoolInput: String = ""
+    @State var gpaInput: String = ""
+    @State var startingDateInput: Date = Date()
+    @State var endingDateInput: Date = Date()
+    @State var attending: Bool = false
+    
+    var addEducationEntryView: some View {
+            VStack(spacing: 20) {
+                Image(systemName: "graduationcap.circle.fill")
+                    .resizable()
+                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                    .padding(.vertical, 40)
+                
+                InputView(label: "Name of School", placeholder: "Enter your School Name", inputText: $schoolInput)
+                    .textInputAutocapitalization(.never)
+                
+                Toggle("Currently attending this school?", isOn: $attending)
+                    .padding(.horizontal, 30)
+                    .foregroundStyle(.cyan)
+                
+                DatePicker(
+                        "Start Date",
+                        selection: $startingDateInput,
+                        displayedComponents: [.date]
+                )
+                .padding(.horizontal, 30)
+                .foregroundStyle(.cyan)
+                
+                if !attending {
+                    DatePicker(
+                            "End Date",
+                            selection: $endingDateInput,
+                            displayedComponents: [.date]
+                    )
+                    .padding(.horizontal, 30)
+                    .foregroundStyle(.cyan)
+                }
+                
+                InputView(label: "GPA", placeholder: "Enter your GPA", inputText: $gpaInput)
+                
+                Button {
+                    let newEntry: EducationEntry
+                    
+                    if attending{
+                        newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, gpa: gpaInput)
+                    } else {
+                        newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, endingDate: endingDateInput, gpa: gpaInput)
+                    }
+                    
+                    viewModel.currentUserPortfolio?.education.entries.append(newEntry)
+                    
+                    showAddEducationEntryView.toggle()
+                    
+                    print(viewModel.currentUserPortfolio?.education.entries)
+                } label: {
+                    Text("Add")
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .foregroundColor(.white)
+                }
+                .background(.cyan)
+                .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
+                
+                Spacer()
+            }
+            .background(.white)
+        }
 }
 
 struct SetupSheet : View {
@@ -145,6 +239,6 @@ struct SetupSheet : View {
     }
 }
 
-#Preview {
-    PortfolioView()
-}
+//#Preview {
+//    PortfolioView()
+//}

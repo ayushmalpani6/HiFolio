@@ -18,8 +18,9 @@ protocol AuthenticationFormProtocol {
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
+    @Published var currentUserPortfolio: Portfolio?
     
-    init(){
+    init() {
         self.userSession = Auth.auth().currentUser
         Task {
             await fetchUser()
@@ -32,7 +33,7 @@ class AuthViewModel: ObservableObject {
             self.userSession = result.user
             await fetchUser()
         } catch {
-            print("OH NO BIG BAD SIGN IN NO WORKY")
+            print("DEBUG: FAILED TO SIGN IN \(error.localizedDescription)")
         }
     }
     
@@ -43,9 +44,13 @@ class AuthViewModel: ObservableObject {
             let user = User(id: result.user.uid, fullName: fullName, emailAddress: email)
             let encodedUser = try Firestore.Encoder().encode(user)
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+            
+            let portfolio = Portfolio(uid: result.user.uid)
+            let encodedPortfolio = try Firestore.Encoder().encode(portfolio)
+            try await Firestore.firestore().collection("portfolios").document(user.id).setData(encodedPortfolio)
             await fetchUser()
         } catch {
-            print("DEBUG: USER CREATE FAIL \(error.localizedDescription)")
+            print("DEBUG: FAILED TO CREATE USER \(error.localizedDescription)")
         }
     }
     
@@ -55,18 +60,57 @@ class AuthViewModel: ObservableObject {
             self.userSession = nil
             self.currentUser = nil
         } catch {
-            print("DEBUG BIG PROBLEMO IN THE SIGNING OUT \(error.localizedDescription)")
+            print("DEBUG: FAILED TO SIGN OUT \(error.localizedDescription)")
         }
     }
     
     func deleteAccount() {
+        print("DELETING")
         let user = Auth.auth().currentUser
-        user?.delete()
+        user?.delete() { error in
+            if let error = error {
+                print("DEBUG: FAILED TO DELETE \(error.localizedDescription)")
+            } else {
+                print("DELETED")
+                self.userSession = nil
+                self.currentUser = nil
+            }
+        }
+    }
+    
+    func deleteData() {
+        if let user = currentUser {
+            let userDocument = Firestore
+                .firestore()
+                .collection("users")
+                .document(user.id)
+            let portfolioDocument = Firestore
+                .firestore()
+                .collection("portfolios")
+                .document(user.id)
+            userDocument.delete { error in
+                if let error = error {
+                    print("DEBUG: FAILED TO DELETE USER DATA \(error.localizedDescription)")
+                } else {
+                    print("User Data Deleted")
+                }
+            }
+            portfolioDocument.delete { error in
+                if let error = error {
+                    print("DEBUG: FAILED TO DELETE PORTFOLIO DATA \(error.localizedDescription)")
+                } else {
+                    print("Portfolio Data Deleted")
+                }
+            }
+        }
+        
     }
     
     func fetchUser() async {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else { return }
         self.currentUser = try? snapshot.data(as: User.self)
+        guard let portfolioSnapshot = try? await Firestore.firestore().collection("portfolios").document(uid).getDocument() else { return }
+        self.currentUserPortfolio = try? portfolioSnapshot.data(as: Portfolio.self)
     }
 }

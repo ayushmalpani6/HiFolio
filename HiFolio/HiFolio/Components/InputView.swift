@@ -24,7 +24,7 @@ struct InputView: View {
                     .fontWeight(.thin)
             } else{
                 TextField(label, text: $inputText, prompt: Text(placeholder))
-                    .fontWeight(.thin)
+                        .fontWeight(.thin)
             }
             Divider()
         }

@@ -24,14 +24,14 @@ struct LoginView: View  {
                 InputView(label: "Email Address",
                           placeholder: "example@email.com",
                           inputText: $emailInput)
-                .textInputAutocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .padding(.bottom, 20)
                 
                 InputView(label: "Password",
                           placeholder: "Enter Password",
                           inputText: $passwordInput,
                           isSecureField: true)
-                .textInputAutocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 
                 // forgot password button
                 Button {
