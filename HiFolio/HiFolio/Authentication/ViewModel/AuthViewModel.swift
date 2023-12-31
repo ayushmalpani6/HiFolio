@@ -113,4 +113,18 @@ class AuthViewModel: ObservableObject {
         guard let portfolioSnapshot = try? await Firestore.firestore().collection("portfolios").document(uid).getDocument() else { return }
         self.currentUserPortfolio = try? portfolioSnapshot.data(as: Portfolio.self)
     }
+    
+    func updatePortfolio() async {
+        if let user = currentUser {
+            let portfolioDocument = Firestore
+                .firestore()
+                .collection("portfolios")
+                .document(user.id)
+            do {
+                try portfolioDocument.setData(from: currentUserPortfolio)
+            } catch {
+                print("DEBUG: Failed to save Portfolio \(error.localizedDescription)")
+            }
+        }
+    }
 }

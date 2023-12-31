@@ -91,19 +91,15 @@ struct PortfolioView: View {
                             DisclosureGroup(section.title) {
                                 VStack {
                                     if viewModel.currentUserPortfolio != nil{
-                                        List() {
-                                            if viewModel.currentUserPortfolio != nil {
-                                                ForEach(viewModel.currentUserPortfolio!.education.entries) { entry in
-                                                    Text(entry.schoolName)
-                                                }
-                                            }
+                                        ForEach(viewModel.currentUserPortfolio!.education.entries) { entry in
+                                            Text(entry.schoolName)
                                         }
                                     }
-                                    Button {
-                                        showAddEducationEntryView.toggle()
-                                    } label : {
-                                        Text("Edit")
-                                    }
+                                }
+                                Button {
+                                    showAddEducationEntryView.toggle()
+                                } label : {
+                                    Text("Add Entry")
                                 }
                             }
                             .frame(maxWidth: .infinity)
@@ -166,8 +162,7 @@ struct PortfolioView: View {
                 
                 Button {
                     let newEntry: EducationEntry
-                    
-                    if attending{
+                    if attending {
                         newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, gpa: gpaInput)
                     } else {
                         newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, endingDate: endingDateInput, gpa: gpaInput)
@@ -175,9 +170,11 @@ struct PortfolioView: View {
                     
                     viewModel.currentUserPortfolio?.education.entries.append(newEntry)
                     
-                    showAddEducationEntryView.toggle()
+                    Task {
+                        await viewModel.updatePortfolio()
+                    }
                     
-                    print(viewModel.currentUserPortfolio?.education.entries)
+                    showAddEducationEntryView.toggle()
                 } label: {
                     Text("Add")
                         .frame(maxWidth: .infinity)
