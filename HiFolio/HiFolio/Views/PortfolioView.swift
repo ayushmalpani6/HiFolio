@@ -27,6 +27,7 @@ struct PortfolioView: View {
         SectionTitle(title: "Community Service", checked: false),
         SectionTitle(title: "Work Experience", checked: false)
     ]
+    
     @State var showAddEducationEntryView: Bool = false
     
     var body: some View {
@@ -89,10 +90,21 @@ struct PortfolioView: View {
                     ForEach(sections) { section in
                         if section.checked {
                             DisclosureGroup(section.title) {
-                                VStack {
+                                VStack(alignment: .leading) {
                                     if viewModel.currentUserPortfolio != nil{
-                                        ForEach(viewModel.currentUserPortfolio!.education.entries) { entry in
-                                            Text(entry.schoolName)
+                                        ForEach(viewModel.currentUserPortfolio!.getSectionEntries(sectionTitle: section.title), id: \.id) { entry in
+                                            VStack {
+                                                Text(entry.title)
+                                                    .fontWeight(.semibold)
+                                                Text(entry.date)
+                                                    .fontWeight(.light)
+                                                Text(entry.description)
+                                                    .fontWeight(.regular)
+                                            }
+                                            .background(.gray)
+                                            .padding(10)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            
                                         }
                                     }
                                 }
@@ -100,13 +112,13 @@ struct PortfolioView: View {
                                     showAddEducationEntryView.toggle()
                                 } label : {
                                     Text("Add Entry")
+                                        .fontWeight(.black)
                                 }
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 40)
                                 .padding(.vertical, 5)
                                 .tint(.cyan)
-                                .fontWeight(.black)
                         }
                     }
                 }
@@ -192,7 +204,7 @@ struct PortfolioView: View {
         }
 }
 
-struct SetupSheet : View {
+struct SetupSheet: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var sections: [SectionTitle]
     
@@ -235,6 +247,8 @@ struct SetupSheet : View {
         }
     }
 }
+
+
 
 //#Preview {
 //    PortfolioView()
