@@ -2,10 +2,12 @@
 //  Portfolio.swift
 //  HiFolio
 //
-//  Created by Jugal Malpani on 12/27/23.
+//  Created by Ayush Malpani on 12/27/23.
 //
 
 import Foundation
+
+// MARK: - Portfolio Model
 
 class Portfolio: Identifiable, ObservableObject, Codable {
     let id: String
@@ -90,7 +92,7 @@ class Portfolio: Identifiable, ObservableObject, Codable {
     }
 }
 
-// MARK: PORTFOLIO SECTIONS
+// MARK: - Portfolio Sections
 
 protocol PortfolioSections {
     associatedtype sectionEntryType
@@ -152,7 +154,7 @@ struct WorkExperienceSection  : PortfolioSections, Codable {
     var entries: [WorkExperienceEntry] = []
 }
 
-// MARK: PORTFOLIO SECTION ENTRIES
+// MARK: - Portfolio Section Entries
 
 protocol PortfolioSectionEntry: Identifiable {
     var id: UUID { get }

@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+// Color scheme
 let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
 let secondaryColor = Color(red: 213/255, green: 229/255, blue: 240/255)
 
@@ -88,7 +90,9 @@ struct PortfolioView: View {
                         )
                     )
                     .padding(.horizontal, 10)
+                
                 Spacer()
+                
                 Button {
                     showSetupSheet.toggle()
                 } label: {
@@ -107,11 +111,8 @@ struct PortfolioView: View {
                 VStack (alignment: .leading) {
                     Text("Hi I'm \(viewModel.currentUser?.fullName ?? "")")
                         .font(.system(size: 14))
-                    Text("")
+                        .padding(.bottom, 10)
                     Text(viewModel.currentUser?.emailAddress ?? "")
-                        .font(.system(size: 14))
-                    Text("")
-                    Text("Class of 20XX")
                         .font(.system(size: 14))
                 }
                 .padding(.trailing, 20)
@@ -217,7 +218,6 @@ struct SetupSheet: View {
     let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
     
     var body: some View {
-
         VStack(alignment: .trailing) {
             Button {
                 presentationMode.wrappedValue.dismiss()
@@ -257,9 +257,7 @@ struct SetupSheet: View {
 }
 
 
-// MARK: ADD ENTRY VIEWS
-
-
+// MARK: - ADD ENTRY VIEWS
 struct AddEducationEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State var schoolInput: String = ""
@@ -995,7 +993,3 @@ struct AddWorkEntryView: View {
             .background(.white)
         }
 }
-
-//#Preview {
-//    PortfolioView()
-//}
