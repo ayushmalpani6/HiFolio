@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+
+
 struct InputView: View {
     var label: String
     var placeholder: String
@@ -17,14 +19,14 @@ struct InputView: View {
         VStack (alignment: .leading) {
             Text(label)
                 .fontWeight(.semibold)
-                .foregroundStyle(.cyan)
+                .foregroundStyle(primaryColor)
                 
             if isSecureField {
                 SecureField(label, text: $inputText, prompt: Text(placeholder))
                     .fontWeight(.thin)
             } else{
                 TextField(label, text: $inputText, prompt: Text(placeholder))
-                    .fontWeight(.thin)
+                        .fontWeight(.thin)
             }
             Divider()
         }

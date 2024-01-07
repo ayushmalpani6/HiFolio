@@ -15,7 +15,7 @@
 		B63110D32B322B1E00577B4F /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B63110D22B322B1E00577B4F /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		B63110D52B322B1E00577B4F /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B63110D42B322B1E00577B4F /* FirebaseAppCheck */; };
 		B63110D72B322B1E00577B4F /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = B63110D62B322B1E00577B4F /* FirebaseAppDistribution-Beta */; };
-		B63110D92B322B1E00577B4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B63110D82B322B1E00577B4F /* FirebaseAuth */; };
+		B63110D92B322B1E00577B4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B63110D82B322B1E00577B4F /* FirebaseAuth */; settings = {ATTRIBUTES = (Required, ); }; };
 		B63110DB2B322B1E00577B4F /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B63110DA2B322B1E00577B4F /* FirebaseAuthCombine-Community */; };
 		B63110DD2B322B1E00577B4F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B63110DC2B322B1E00577B4F /* FirebaseCrashlytics */; };
 		B63110DF2B322B1E00577B4F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B63110DE2B322B1E00577B4F /* FirebaseDatabase */; };
@@ -39,6 +39,7 @@
 		B63111072B322CE500577B4F /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63111062B322CE500577B4F /* AuthViewModel.swift */; };
 		B64F49632B3742E200EE4D01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F49622B3742E200EE4D01 /* SettingsView.swift */; };
 		B64F49672B3745D400EE4D01 /* PortfolioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F49662B3745D400EE4D01 /* PortfolioView.swift */; };
+		B66422972B3CEBF70054A2E6 /* Portfolio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66422962B3CEBF70054A2E6 /* Portfolio.swift */; };
 		B6927A722B3256E9001B033A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6927A712B3256E9001B033A /* User.swift */; };
 		B6B73F7B2B2F76C200C389F9 /* HiFolioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B73F7A2B2F76C200C389F9 /* HiFolioApp.swift */; };
 		B6B73F7D2B2F76C200C389F9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B73F7C2B2F76C200C389F9 /* ContentView.swift */; };
@@ -55,6 +56,7 @@
 		B63111062B322CE500577B4F /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		B64F49622B3742E200EE4D01 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B64F49662B3745D400EE4D01 /* PortfolioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioView.swift; sourceTree = "<group>"; };
+		B66422962B3CEBF70054A2E6 /* Portfolio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Portfolio.swift; sourceTree = "<group>"; };
 		B6927A712B3256E9001B033A /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B6B73F772B2F76C200C389F9 /* HiFolio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HiFolio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6B73F7A2B2F76C200C389F9 /* HiFolioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiFolioApp.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 		B6B73F792B2F76C200C389F9 /* HiFolio */ = {
 			isa = PBXGroup;
 			children = (
+				B6C2ADC82B3CE53E00906F78 /* Models */,
 				B64F49612B3742AD00EE4D01 /* Views */,
 				B63111022B322BB000577B4F /* Authentication */,
 				B6B73F8A2B2F7C4400C389F9 /* Components */,
@@ -194,6 +197,14 @@
 				B6B73F8B2B2F7C6500C389F9 /* InputView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		B6C2ADC82B3CE53E00906F78 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B66422962B3CEBF70054A2E6 /* Portfolio.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,6 +316,7 @@
 				B6B73F8E2B30B72B00C389F9 /* SignUpView.swift in Sources */,
 				B64F49632B3742E200EE4D01 /* SettingsView.swift in Sources */,
 				B63111072B322CE500577B4F /* AuthViewModel.swift in Sources */,
+				B66422972B3CEBF70054A2E6 /* Portfolio.swift in Sources */,
 				B6927A722B3256E9001B033A /* User.swift in Sources */,
 				B6B73F8C2B2F7C6500C389F9 /* InputView.swift in Sources */,
 				B6B73F7D2B2F76C200C389F9 /* ContentView.swift in Sources */,
@@ -450,6 +462,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -457,9 +470,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ayushmalpani6.HiFolio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -479,6 +495,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -486,9 +503,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ayushmalpani6.HiFolio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
