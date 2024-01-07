@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct LoginView: View  {
     @State var emailInput: String = ""
     @State var passwordInput: String = ""
@@ -40,7 +41,7 @@ struct LoginView: View  {
                     HStack {
                         Spacer()
                         Text("Forgot Password?")
-                            .foregroundStyle(.cyan)
+                            .foregroundStyle(primaryColor)
                             .fontWeight(.medium)
                     }
                     .padding(.top, 10)
@@ -60,7 +61,7 @@ struct LoginView: View  {
                             .frame(height: 50)
                             .foregroundColor(.white)
                     }
-                    .background(.cyan)
+                    .background(primaryColor)
                     .clipShape(RoundedRectangle(cornerRadius: 10.0))
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
@@ -75,7 +76,7 @@ struct LoginView: View  {
                     SignUpView()
                 } label: {
                     Text("Don't have an account? **Sign Up**")
-                        .foregroundStyle(.cyan)
+                        .foregroundStyle(primaryColor)
                 }
                 .navigationBarBackButtonHidden(true)
             }

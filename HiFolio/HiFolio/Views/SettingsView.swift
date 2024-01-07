@@ -32,7 +32,7 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 100)
-            .background(.cyan)
+            .background(primaryColor)
             .clipShape(RoundedRectangle(cornerRadius: 10.0))
             .padding(.vertical, 30)
             .padding(.horizontal, 20)
@@ -44,7 +44,7 @@ struct SettingsView: View {
             } label: {
                 Text("SIGN OUT")
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                    .foregroundColor(.cyan)
+                    .foregroundColor(primaryColor)
             }
             
             Button{
@@ -52,7 +52,7 @@ struct SettingsView: View {
             } label: {
                 Text("DELETE ACCOUNT")
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                    .foregroundColor(.cyan)
+                    .foregroundColor(primaryColor)
             }
             .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
                 Button("Delete your Account?", role: .destructive) {
@@ -60,14 +60,7 @@ struct SettingsView: View {
                     viewModel.deleteAccount()
                 }
             }
-//            Button {
-//                viewModel.deleteData()
-//                viewModel.deleteAccount()
-//            } label : {
-//                Text("DELETE ACCOUNT")
-//                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-//                    .foregroundStyle(.cyan)
-//            }
+
         }
     }
 }

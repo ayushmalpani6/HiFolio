@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct SignUpView: View {
     @State var emailInput: String = ""
     @State var nameInput: String = ""
@@ -57,7 +58,7 @@ struct SignUpView: View {
                         .frame(height: 50)
                         .foregroundColor(.white)
                 }
-                .background(.cyan)
+                .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
                 .padding(.top, 10)
@@ -71,7 +72,7 @@ struct SignUpView: View {
                     dismiss()
                 } label: {
                     Text("Already have an account? **Sign In**")
-                        .foregroundStyle(.cyan)
+                        .foregroundStyle(primaryColor)
                 }
             }
         }
