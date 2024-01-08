@@ -32,16 +32,9 @@ struct PortfolioView: View {
         SectionTitle(title: "Work Experience", checked: false)
     ]
     
-    @State var showAddEducationEntryView: Bool = false
-    @State var showAddAwardsEntryView: Bool = false
-    @State var showAddAthleticsEntryView: Bool = false
-    @State var showAddArtsEntryView: Bool = false
-    @State var showAddClubsEntryView: Bool = false
-    @State var showAddCoursesEntryView: Bool = false
-    @State var showAddProjectsEntryView: Bool = false
-    @State var showAddServiceEntryView: Bool = false
-    @State var showAddWorkEntryView: Bool = false
-    
+    @State var showAddEntryView: Bool = false
+    @State var editMode: Bool = true
+    @State var section: SectionTitle?
     
     var body: some View {
         ZStack {
@@ -49,99 +42,82 @@ struct PortfolioView: View {
                 header
                 mainBody
             }
-            
-            if showAddEducationEntryView {
-                AddEducationEntryView(showSheet: $showAddEducationEntryView)
-            } else if showAddAwardsEntryView {
-                AddAwardsEntryView(showSheet: $showAddAwardsEntryView)
-            } else if showAddAthleticsEntryView {
-                AddAthleticsEntryView(showSheet: $showAddAthleticsEntryView)
-            } else if showAddArtsEntryView {
-                AddArtsEntryView(showSheet: $showAddArtsEntryView)
-            } else if showAddClubsEntryView {
-                AddClubsEntryView(showSheet: $showAddClubsEntryView)
-            } else if showAddCoursesEntryView {
-                AddCoursesEntryView(showSheet: $showAddCoursesEntryView)
-            } else if showAddProjectsEntryView {
-                AddProjectsEntryView(showSheet: $showAddProjectsEntryView)
-            } else if showAddServiceEntryView {
-                AddCommunityServiceEntryView(showSheet: $showAddServiceEntryView)
-            } else if showAddWorkEntryView {
-                AddWorkEntryView(showSheet: $showAddWorkEntryView)
+          
+            if showAddEntryView {
+                AddEntryView(section: section, showSheet: $showAddEntryView)
             }
         }
     }
     
     var header: some View {
-        VStack {
-            HStack {
-                Text("My Folio")
-                    .fontWeight(.bold)
-                    .font(.system(size: 25))
-                    .foregroundStyle(.black)
-                    .frame(width: 150, height: 50)
-                    .background(primaryColor)
-                    .clipShape(
-                        .rect(
-                            topLeadingRadius: 20,
-                            bottomLeadingRadius: 0,
-                            bottomTrailingRadius: 0,
-                            topTrailingRadius: 20
-                        )
+        HStack {
+            Text("My Folio")
+                .fontWeight(.bold)
+                .font(.system(size: 25))
+                .foregroundStyle(secondaryColor)
+                .frame(width: 150, height: 50)
+                .background(primaryColor)
+                .clipShape(
+                    .rect(
+                        topLeadingRadius: 10,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 10,
+                        topTrailingRadius: 10
                     )
-                    .padding(.horizontal, 10)
-                
-                Spacer()
-                
-                Button {
-                    showSetupSheet.toggle()
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .imageScale(.large)
-                        .foregroundStyle(Color(.black))
-                        .padding(.horizontal, 10)
-                }
-            }
-            HStack {
-                Image(systemName: "person")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .padding(.horizontal, 30)
-                    .padding(.vertical, 20)
-                VStack (alignment: .leading) {
-                    Text("Hi I'm \(viewModel.currentUser?.fullName ?? "")")
-                        .font(.system(size: 14))
-                        .padding(.bottom, 10)
-                    Text(viewModel.currentUser?.emailAddress ?? "")
-                        .font(.system(size: 14))
-                }
-                .padding(.trailing, 20)
-                Spacer()
-            }
-            .background(primaryColor)
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 0,
-                    bottomLeadingRadius: 20,
-                    bottomTrailingRadius: 20,
-                    topTrailingRadius: 20
                 )
-            )
-            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-            .padding(.horizontal, 10)
+                .padding(.horizontal, 10)
+            
+            Spacer()
+            
+            Button {
+                showSetupSheet.toggle()
+            } label: {
+                Image(systemName: "plus.circle")
+                    .imageScale(.large)
+                    .foregroundStyle(primaryColor)
+                    .padding(.horizontal, 10)
+            }
         }
     }
     
     
     var mainBody: some View {
         ScrollView {
+            HStack {
+                Image(systemName: "person")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .padding(20)
+                VStack (alignment: .leading) {
+                    Text(viewModel.currentUser?.fullName ?? "")
+                        .font(.system(size: 14))
+                        .padding(.bottom, 10)
+                    Text(viewModel.currentUser?.emailAddress ?? "")
+                        .font(.system(size: 14))
+                }
+                .padding(.trailing, 20)
+                .foregroundColor(secondaryColor)
+                Spacer()
+            }
+            .background(primaryColor)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 10,
+                    bottomTrailingRadius: 10,
+                    topTrailingRadius: 10
+                )
+            )
+            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+            .padding(.horizontal, 10)
+            
             VStack(alignment: .leading) {
                 GroupBox {
                     ForEach(sections) { section in
                         if section.checked {
                             DisclosureGroup {
-                                VStack() {
-                                    if viewModel.currentUserPortfolio != nil{
+                                VStack {
+                                    if viewModel.currentUserPortfolio != nil {
                                         ForEach(viewModel.currentUserPortfolio!.getSectionEntries(sectionTitle: section.title), id: \.id) { entry in
                                             HStack {
                                                 VStack(alignment: .leading) {
@@ -160,36 +136,21 @@ struct PortfolioView: View {
                                             .padding(10)
                                             .background(secondaryColor)
                                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            
                                         }
                                     }
                                     
-                                    Button {
-                                        if section.title == "Education" {
-                                            showAddEducationEntryView.toggle()
-                                        } else if section.title == "Awards" {
-                                            showAddAwardsEntryView.toggle()
-                                        } else if section.title == "Athletics" {
-                                            showAddAthleticsEntryView.toggle()
-                                        } else if section.title == "Arts" {
-                                            showAddArtsEntryView.toggle()
-                                        } else if section.title == "Clubs & Organizations" {
-                                            showAddClubsEntryView.toggle()
-                                        } else if section.title == "Courses" {
-                                            showAddCoursesEntryView.toggle()
-                                        } else if section.title == "Projects" {
-                                            showAddProjectsEntryView.toggle()
-                                        } else if section.title == "Community Service" {
-                                            showAddServiceEntryView.toggle()
-                                        } else if section.title == "Work Experience" {
-                                            showAddWorkEntryView.toggle()
+                                    if editMode {
+                                        Button {
+                                            self.section = section
+                                            showAddEntryView.toggle()
+                                        } label : {
+                                            Text("+ Add Entry")
+                                                .fontWeight(.medium)
                                         }
-                                    } label : {
-                                        Text("+ Add Entry")
-                                            .fontWeight(.medium)
                                     }
                                 }
                                 .padding(.top, 5)
+                                    
                             } label: {
                                 Text(section.title)
                                     .font(.title3)
@@ -201,19 +162,20 @@ struct PortfolioView: View {
                     }
                 }
                 .backgroundStyle(.white)
-
                 Spacer()
             }
         }
         .sheet(isPresented: $showSetupSheet, content: {
-            SetupSheet(sections: $sections)
+            SetupSheet(sections: $sections, editMode: $editMode)
         })
     }
+    
 }
 
 struct SetupSheet: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var sections: [SectionTitle]
+    @Binding var editMode: Bool
     
     let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
     
@@ -227,29 +189,48 @@ struct SetupSheet: View {
                     .padding(.trailing, 15)
                     .foregroundColor(primaryColor)
             }
-            
-            ForEach(sections.indices) { index in
-                   Button {
-                       sections[index].checked.toggle()
-                   } label: {
-                       HStack {
-                           Text(sections[index].title)
-                               .fontWeight(.bold)
-                               .font(.system(size: 15))
-                               .foregroundStyle(primaryColor)
-                               .padding(.horizontal, 20)
-                           Spacer()
-                           if sections[index].checked == false {
-                               Image(systemName: "square")
-                                   .foregroundStyle(primaryColor)
-                           } else {
-                               Image(systemName: "checkmark.square.fill")
-                                   .foregroundStyle(primaryColor)
-                           }
-                       }
-                   }
-                   .padding(15)
-                Divider()
+            HStack {
+                Spacer()
+                Toggle("Edit Mode", isOn: $editMode)
+                    .padding(15)
+                    .foregroundColor(primaryColor)
+                    .fontWeight(.medium)
+                    .frame(width: 200)
+                    .font(.system(size: 18))
+                Spacer()
+            }
+            if editMode {
+                ForEach(sections.indices) { index in
+                    Button {
+                        sections[index].checked.toggle()
+                    } label: {
+                        HStack {
+                            Text(sections[index].title)
+                                .fontWeight(.regular)
+                                .font(.system(size: 16))
+                                .foregroundStyle(primaryColor)
+                                .padding(.horizontal, 20)
+                            Spacer()
+                            if sections[index].checked == false {
+                                Image(systemName: "square")
+                                    .foregroundStyle(primaryColor)
+                            } else {
+                                Image(systemName: "checkmark.square.fill")
+                                    .foregroundStyle(primaryColor)
+                            }
+                        }
+                    }
+                    .padding(15)
+                    Divider()
+                }
+            } else {
+                Text("You are currently in Showcase Mode - use this mode if your are showing off your portfolio! If you would like to make any changes, switch to edit mode.")
+                    .padding(20)
+                    .font(.system(size: 14))
+                    .fontWeight(.medium)
+                    .foregroundColor(primaryColor)
+                    .background(secondaryColor)
+                    .padding(20)
             }
             Spacer()
         }
@@ -258,8 +239,41 @@ struct SetupSheet: View {
 
 
 // MARK: - ADD ENTRY VIEWS
+struct AddEntryView: View {
+    @EnvironmentObject var viewModel: AuthViewModel
+    @State var section: SectionTitle?
+    @Binding var showSheet: Bool
+    
+    var body: some View {
+        if section != nil {
+            if section!.title == "Education" {
+                AddEducationEntryView(showSheet: $showSheet)
+            } else if section!.title == "Awards" {
+                AddAwardsEntryView(showSheet: $showSheet)
+            } else if section!.title == "Athletics" {
+                AddAthleticsEntryView(showSheet: $showSheet)
+            } else if section!.title == "Arts" {
+                AddArtsEntryView(showSheet: $showSheet)
+            } else if section!.title == "Clubs & Organizations" {
+                AddClubsEntryView(showSheet: $showSheet)
+            } else if section!.title == "Courses" {
+                AddCoursesEntryView(showSheet: $showSheet)
+            } else if section!.title == "Projects" {
+                AddProjectsEntryView(showSheet: $showSheet)
+            } else if section!.title == "Community Service" {
+                AddCommunityServiceEntryView(showSheet: $showSheet)
+            } else if section!.title == "Work Experience" {
+                AddWorkEntryView(showSheet: $showSheet)
+            }
+        }
+    }
+}
+
+
 struct AddEducationEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @State var entryToEdit: EducationEntry?
+    
     @State var schoolInput: String = ""
     @State var gpaInput: String = ""
     @State var startingDateInput: Date = Date()
@@ -929,7 +943,7 @@ struct AddWorkEntryView: View {
                     .padding(.top, 10)
                     Spacer()
                 }
-                Image(systemName: "theatermask.and.paintbrush.fill")
+                Image(systemName: "briefcase.fill")
                     .resizable()
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
