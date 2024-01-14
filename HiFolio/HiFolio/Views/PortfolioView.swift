@@ -18,6 +18,7 @@ struct SectionTitle: Identifiable {
 }
 
 struct PortfolioView: View {
+    @Environment (\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
     @State var sections: [SectionTitle] = [
@@ -44,7 +45,12 @@ struct PortfolioView: View {
             }
           
             if showAddEntryView {
-                AddEntryView(section: section, showSheet: $showAddEntryView)
+                withAnimation {
+                    AddEntryView(section: section, showSheet: $showAddEntryView)
+                        .background(colorScheme == .light ? .white : .black)
+                        .scaleEffect(showAddEntryView ? 1 : 0.5)
+                        .opacity(showAddEntryView ? 1 : 0)
+                }
             }
         }
     }
@@ -134,6 +140,7 @@ struct PortfolioView: View {
                                                 Spacer()
                                             }
                                             .padding(10)
+                                            .foregroundStyle(.black)
                                             .background(secondaryColor)
                                             .clipShape(RoundedRectangle(cornerRadius: 10))
                                         }
@@ -161,7 +168,7 @@ struct PortfolioView: View {
                         }
                     }
                 }
-                .backgroundStyle(.white)
+                .backgroundStyle(colorScheme == .light ? .white : .black)
                 Spacer()
             }
         }
@@ -354,7 +361,6 @@ struct AddEducationEntryView: View {
                 
                 Spacer()
             }
-            .background(.white)
         }
 }
 
