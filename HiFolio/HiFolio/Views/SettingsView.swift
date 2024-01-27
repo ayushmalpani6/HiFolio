@@ -37,6 +37,12 @@ struct SettingsView: View {
             .padding(.vertical, 30)
             .padding(.horizontal, 20)
             
+//            Button {
+//                
+//            } label: {
+//                Text("Edit Name")
+//            }
+            
             Spacer()
             
             Button{
@@ -64,6 +70,24 @@ struct SettingsView: View {
         }
     }
 }
+
+//struct ChangeSheet: View {
+//    @Environment(\.presentationMode) var presentationMode
+//    @State var emailInput: String = ""
+//    @State var nameInput: String = ""
+//    @EnvironmentObject var viewModel: AuthViewModel
+//    
+//    var body: some View {
+//        VStack(alignment: .trailing) {
+//            InputView(label: "Email Address", placeholder: viewModel.currentUser?.fullName ?? "nil", inputText: $emailInput)
+//                .textInputAutocapitalization(.never)
+//            InputView(label: "Full Name", placeholder: viewModel.currentUser?.fullName ?? "nil", inputText: $nameInput)
+//            
+//            
+//            
+//        }
+//    }
+//}
 
 #Preview {
     SettingsView()

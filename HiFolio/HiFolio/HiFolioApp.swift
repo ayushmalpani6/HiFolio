@@ -9,7 +9,7 @@ import SwiftUI
 import Firebase
 
 @main
-struct HiFolioApp: App {
+    struct HiFolioApp: App {
     @StateObject var viewModel = AuthViewModel()
     
     init() {
