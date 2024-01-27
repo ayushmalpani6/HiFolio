@@ -10,6 +10,7 @@ import SwiftUI
 // Color scheme
 let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
 let secondaryColor = Color(red: 213/255, green: 229/255, blue: 240/255)
+let destructiveColor = Color(red: 255/255, green: 77/255, blue: 77/255)
 
 struct SectionTitle: Identifiable {
     var title: String
@@ -18,6 +19,7 @@ struct SectionTitle: Identifiable {
 }
 
 struct PortfolioView: View {
+    @Environment (\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
     @State var sections: [SectionTitle] = [
@@ -32,16 +34,11 @@ struct PortfolioView: View {
         SectionTitle(title: "Work Experience", checked: false)
     ]
     
-    @State var showAddEducationEntryView: Bool = false
-    @State var showAddAwardsEntryView: Bool = false
-    @State var showAddAthleticsEntryView: Bool = false
-    @State var showAddArtsEntryView: Bool = false
-    @State var showAddClubsEntryView: Bool = false
-    @State var showAddCoursesEntryView: Bool = false
-    @State var showAddProjectsEntryView: Bool = false
-    @State var showAddServiceEntryView: Bool = false
-    @State var showAddWorkEntryView: Bool = false
-    
+    @State var showAddEntryView: Bool = false
+    @State var editMode: Bool = true
+    @State var section: SectionTitle?
+    @State var sectionEntry: (any PortfolioSectionEntry)?
+    @State var addEdit: Bool = false
     
     var body: some View {
         ZStack {
@@ -49,147 +46,170 @@ struct PortfolioView: View {
                 header
                 mainBody
             }
-            
-            if showAddEducationEntryView {
-                AddEducationEntryView(showSheet: $showAddEducationEntryView)
-            } else if showAddAwardsEntryView {
-                AddAwardsEntryView(showSheet: $showAddAwardsEntryView)
-            } else if showAddAthleticsEntryView {
-                AddAthleticsEntryView(showSheet: $showAddAthleticsEntryView)
-            } else if showAddArtsEntryView {
-                AddArtsEntryView(showSheet: $showAddArtsEntryView)
-            } else if showAddClubsEntryView {
-                AddClubsEntryView(showSheet: $showAddClubsEntryView)
-            } else if showAddCoursesEntryView {
-                AddCoursesEntryView(showSheet: $showAddCoursesEntryView)
-            } else if showAddProjectsEntryView {
-                AddProjectsEntryView(showSheet: $showAddProjectsEntryView)
-            } else if showAddServiceEntryView {
-                AddCommunityServiceEntryView(showSheet: $showAddServiceEntryView)
-            } else if showAddWorkEntryView {
-                AddWorkEntryView(showSheet: $showAddWorkEntryView)
+          
+            if showAddEntryView {
+                VStack {
+                    if section != nil {
+                        if section!.title == "Education" {
+                            AddEducationEntryView(entry: (sectionEntry as! EducationEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Awards" {
+                            AddAwardsEntryView(entry: (sectionEntry as! AwardsEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Athletics" {
+                            AddAthleticsEntryView(entry: (sectionEntry as! AthleticsEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Arts" {
+                            AddArtsEntryView(entry: (sectionEntry as! ArtsEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Clubs & Organizations" {
+                            AddClubsEntryView(entry: (sectionEntry as! ClubsEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Courses" {
+                            AddCoursesEntryView(entry: (sectionEntry as! CoursesEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Projects" {
+                            AddProjectsEntryView(entry: (sectionEntry as! ProjectsEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Community Service" {
+                            AddCommunityServiceEntryView(entry: (sectionEntry as! CommunityServiceEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        } else if section!.title == "Work Experience" {
+                            AddWorkEntryView(entry: (sectionEntry as! WorkExperienceEntry), showSheet: $showAddEntryView, addOrEdit: $addEdit)
+                        }
+                    }
+                }
+                .background(colorScheme == .light ? .white : .black)
+                .scaleEffect(showAddEntryView ? 1 : 0.5)
+                .opacity(showAddEntryView ? 1 : 0)
+                
+
             }
         }
     }
     
     var header: some View {
-        VStack {
-            HStack {
-                Text("My Folio")
-                    .fontWeight(.bold)
-                    .font(.system(size: 25))
-                    .foregroundStyle(.black)
-                    .frame(width: 150, height: 50)
-                    .background(primaryColor)
-                    .clipShape(
-                        .rect(
-                            topLeadingRadius: 20,
-                            bottomLeadingRadius: 0,
-                            bottomTrailingRadius: 0,
-                            topTrailingRadius: 20
-                        )
+        HStack {
+            Text("My Folio")
+                .fontWeight(.bold)
+                .font(.system(size: 25))
+                .foregroundStyle(secondaryColor)
+                .frame(width: 150, height: 50)
+                .background(primaryColor)
+                .clipShape(
+                    .rect(
+                        topLeadingRadius: 10,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 10,
+                        topTrailingRadius: 10
                     )
-                    .padding(.horizontal, 10)
-                
-                Spacer()
-                
-                Button {
-                    showSetupSheet.toggle()
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .imageScale(.large)
-                        .foregroundStyle(Color(.black))
-                        .padding(.horizontal, 10)
-                }
-            }
-            HStack {
-                Image(systemName: "person")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .padding(.horizontal, 30)
-                    .padding(.vertical, 20)
-                VStack (alignment: .leading) {
-                    Text("Hi I'm \(viewModel.currentUser?.fullName ?? "")")
-                        .font(.system(size: 14))
-                        .padding(.bottom, 10)
-                    Text(viewModel.currentUser?.emailAddress ?? "")
-                        .font(.system(size: 14))
-                }
-                .padding(.trailing, 20)
-                Spacer()
-            }
-            .background(primaryColor)
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 0,
-                    bottomLeadingRadius: 20,
-                    bottomTrailingRadius: 20,
-                    topTrailingRadius: 20
                 )
-            )
-            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-            .padding(.horizontal, 10)
+                .padding(.horizontal, 10)
+            
+            Spacer()
+            
+            Button {
+                showSetupSheet.toggle()
+            } label: {
+                Image(systemName: "plus.circle")
+                    .imageScale(.large)
+                    .foregroundStyle(primaryColor)
+                    .padding(.horizontal, 10)
+            }
         }
     }
     
     
     var mainBody: some View {
         ScrollView {
+            HStack {
+                Image(systemName: "person")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                    .padding(20)
+                VStack (alignment: .leading) {
+                    Text(viewModel.currentUser?.fullName ?? "")
+                        .font(.system(size: 14))
+                        .padding(.bottom, 10)
+                    Text(viewModel.currentUser?.emailAddress ?? "")
+                        .font(.system(size: 14))
+                }
+                .padding(.trailing, 20)
+                .foregroundColor(secondaryColor)
+                Spacer()
+            }
+            .background(primaryColor)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 10,
+                    bottomTrailingRadius: 10,
+                    topTrailingRadius: 10
+                )
+            )
+            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+            .padding(.horizontal, 10)
+            
             VStack(alignment: .leading) {
                 GroupBox {
                     ForEach(sections) { section in
                         if section.checked {
                             DisclosureGroup {
-                                VStack() {
-                                    if viewModel.currentUserPortfolio != nil{
+                                VStack {
+                                    if viewModel.currentUserPortfolio != nil {
                                         ForEach(viewModel.currentUserPortfolio!.getSectionEntries(sectionTitle: section.title), id: \.id) { entry in
-                                            HStack {
-                                                VStack(alignment: .leading) {
-                                                    Text(entry.title)
-                                                        .font(.system(size: 18))
-                                                    Text(entry.date)
-                                                        .font(.system(size: 12))
-                                                        .fontWeight(.thin)
-                                                        .padding(.bottom, 1)
-                                                    Text(entry.description)
-                                                        .font(.system(size: 14))
-                                                        .fontWeight(.light)
+                                            Button {
+                                                self.section = section
+                                                self.sectionEntry = entry
+                                                addEdit = false
+                                                self.showAddEntryView.toggle()
+                                            } label: {
+                                                HStack {
+                                                    VStack(alignment: .leading) {
+                                                        Text(entry.title)
+                                                            .font(.system(size: 18))
+                                                        Text(entry.date)
+                                                            .font(.system(size: 12))
+                                                            .fontWeight(.thin)
+                                                            .padding(.bottom, 1)
+                                                        Text(entry.description)
+                                                            .font(.system(size: 14))
+                                                            .fontWeight(.light)
+                                                    }
+                                                    Spacer()
                                                 }
-                                                Spacer()
+                                                .padding(10)
+                                                .foregroundStyle(.black)
+                                                .background(secondaryColor)
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
                                             }
-                                            .padding(10)
-                                            .background(secondaryColor)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            
                                         }
                                     }
                                     
-                                    Button {
-                                        if section.title == "Education" {
-                                            showAddEducationEntryView.toggle()
-                                        } else if section.title == "Awards" {
-                                            showAddAwardsEntryView.toggle()
-                                        } else if section.title == "Athletics" {
-                                            showAddAthleticsEntryView.toggle()
-                                        } else if section.title == "Arts" {
-                                            showAddArtsEntryView.toggle()
-                                        } else if section.title == "Clubs & Organizations" {
-                                            showAddClubsEntryView.toggle()
-                                        } else if section.title == "Courses" {
-                                            showAddCoursesEntryView.toggle()
-                                        } else if section.title == "Projects" {
-                                            showAddProjectsEntryView.toggle()
-                                        } else if section.title == "Community Service" {
-                                            showAddServiceEntryView.toggle()
-                                        } else if section.title == "Work Experience" {
-                                            showAddWorkEntryView.toggle()
+                                    if editMode {
+                                        Button {
+                                            self.section = section
+                                            if section.title == "Education" {
+                                                self.sectionEntry = EducationEntry(schoolName: "", startingDate: Date(), endingDate: Date(), gpa: "")
+                                            } else if section.title == "Awards" {
+                                                self.sectionEntry = AwardsEntry(awardName: "", awardDate: Date(), awardDescription: "")
+                                            } else if section.title == "Athletics" {
+                                                self.sectionEntry = AthleticsEntry(sportName: "", startingDate: Date(), sportDescription: "")
+                                            } else if section.title == "Arts" {
+                                                self.sectionEntry = ArtsEntry(artName: "", startingDate: Date(), artDescription: "")
+                                            } else if section.title == "Clubs & Organizations" {
+                                                self.sectionEntry = ClubsEntry(clubName: "", startingDate: Date(), clubDescription: "")
+                                            } else if section.title == "Courses" {
+                                                self.sectionEntry = CoursesEntry(courseName: "", courseTerm: "", courseDescription: "")
+                                            } else if section.title == "Projects" {
+                                                self.sectionEntry = ProjectsEntry(projectName: "", startingDate: Date(), projectDescription: "")
+                                            } else if section.title == "Community Service" {
+                                                self.sectionEntry = CommunityServiceEntry(serviceName: "", startingDate: Date(), serviceDescription: "")
+                                            } else if section.title == "Work Experience" {
+                                                self.sectionEntry = WorkExperienceEntry(workplaceName: "", startingDate: Date(), workDescription: "")
+                                            }
+                                            addEdit = true
+                                            showAddEntryView.toggle()
+                                        } label : {
+                                            Text("+ Add Entry")
+                                                .fontWeight(.medium)
                                         }
-                                    } label : {
-                                        Text("+ Add Entry")
-                                            .fontWeight(.medium)
                                     }
                                 }
                                 .padding(.top, 5)
+                                    
                             } label: {
                                 Text(section.title)
                                     .font(.title3)
@@ -200,20 +220,21 @@ struct PortfolioView: View {
                         }
                     }
                 }
-                .backgroundStyle(.white)
-
+                .backgroundStyle(colorScheme == .light ? .white : .black)
                 Spacer()
             }
         }
         .sheet(isPresented: $showSetupSheet, content: {
-            SetupSheet(sections: $sections)
+            SetupSheet(sections: $sections, editMode: $editMode)
         })
     }
+    
 }
 
 struct SetupSheet: View {
     @Environment(\.presentationMode) var presentationMode
     @Binding var sections: [SectionTitle]
+    @Binding var editMode: Bool
     
     let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
     
@@ -227,29 +248,48 @@ struct SetupSheet: View {
                     .padding(.trailing, 15)
                     .foregroundColor(primaryColor)
             }
-            
-            ForEach(sections.indices) { index in
-                   Button {
-                       sections[index].checked.toggle()
-                   } label: {
-                       HStack {
-                           Text(sections[index].title)
-                               .fontWeight(.bold)
-                               .font(.system(size: 15))
-                               .foregroundStyle(primaryColor)
-                               .padding(.horizontal, 20)
-                           Spacer()
-                           if sections[index].checked == false {
-                               Image(systemName: "square")
-                                   .foregroundStyle(primaryColor)
-                           } else {
-                               Image(systemName: "checkmark.square.fill")
-                                   .foregroundStyle(primaryColor)
-                           }
-                       }
-                   }
-                   .padding(15)
-                Divider()
+            HStack {
+                Spacer()
+                Toggle("Edit Mode", isOn: $editMode)
+                    .padding(15)
+                    .foregroundColor(primaryColor)
+                    .fontWeight(.medium)
+                    .frame(width: 200)
+                    .font(.system(size: 18))
+                Spacer()
+            }
+            if editMode {
+                ForEach(sections.indices) { index in
+                    Button {
+                        sections[index].checked.toggle()
+                    } label: {
+                        HStack {
+                            Text(sections[index].title)
+                                .fontWeight(.regular)
+                                .font(.system(size: 16))
+                                .foregroundStyle(primaryColor)
+                                .padding(.horizontal, 20)
+                            Spacer()
+                            if sections[index].checked == false {
+                                Image(systemName: "square")
+                                    .foregroundStyle(primaryColor)
+                            } else {
+                                Image(systemName: "checkmark.square.fill")
+                                    .foregroundStyle(primaryColor)
+                            }
+                        }
+                    }
+                    .padding(15)
+                    Divider()
+                }
+            } else {
+                Text("You are currently in Showcase Mode - use this mode if your are showing off your portfolio! If you would like to make any changes, switch to edit mode.")
+                    .padding(20)
+                    .font(.system(size: 14))
+                    .fontWeight(.medium)
+                    .foregroundColor(primaryColor)
+                    .background(secondaryColor)
+                    .padding(20)
             }
             Spacer()
         }
@@ -258,14 +298,14 @@ struct SetupSheet: View {
 
 
 // MARK: - ADD ENTRY VIEWS
+
 struct AddEducationEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var schoolInput: String = ""
-    @State var gpaInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: EducationEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -285,7 +325,7 @@ struct AddEducationEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of School", placeholder: "Enter your School Name", inputText: $schoolInput)
+                InputView(label: "Name of School", placeholder: "Enter your School Name", inputText: $entry.schoolName)
                     .textInputAutocapitalization(.never)
                 
                 Toggle("Currently attending this school?", isOn: $attending)
@@ -294,7 +334,7 @@ struct AddEducationEntryView: View {
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -303,32 +343,29 @@ struct AddEducationEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "GPA", placeholder: "Enter your GPA", inputText: $gpaInput)
+                InputView(label: "GPA", placeholder: "Enter your GPA", inputText: $entry.gpa)
                 
                 Button {
-                    let newEntry: EducationEntry
-                    if attending {
-                        newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, gpa: gpaInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.education.entries.append(entry)
                     } else {
-                        newEntry = EducationEntry(schoolName: schoolInput, startingDate: startingDateInput, endingDate: endingDateInput, gpa: gpaInput)
+                        if let identifier = viewModel.currentUserPortfolio?.education.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.education.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.education.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -336,20 +373,43 @@ struct AddEducationEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure you want to delete this entry?", isPresented: $isPresentingConfirm) {
+                        Button("Confirm Delete", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.education.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.education.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
 struct AddAwardsEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var DateInput: Date = Date()
+    @State var entry: AwardsEntry
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -369,33 +429,33 @@ struct AddAwardsEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Award", placeholder: "Enter your Award's Name", inputText: $Input)
+                InputView(label: "Name of Award", placeholder: "Enter your Award Name", inputText: $entry.awardName)
                     .textInputAutocapitalization(.never)
                 
-                
                 DatePicker(
-                        "Date of Award",
-                        selection: $DateInput,
+                        "Start Date",
+                        selection: $entry.awardDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
                 .foregroundStyle(primaryColor)
                 
-                InputView(label: "Description", placeholder: "Enter a description of your award", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a description of your Award", inputText: $entry.awardDescription)
                 
                 Button {
-                    let newEntry: AwardsEntry
-                    newEntry = AwardsEntry(awardName: Input, awardDate: DateInput, awardDescription: descriptionInput)
-                    
-                    viewModel.currentUserPortfolio?.awards.entries.append(newEntry)
-                    
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.awards.entries.append(entry)
+                    } else {
+                        if let identifier = viewModel.currentUserPortfolio?.awards.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.awards.entries[identifier] = entry
+                    }
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -403,22 +463,44 @@ struct AddAwardsEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.awards.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.awards.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
 struct AddAthleticsEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: AthleticsEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -435,20 +517,19 @@ struct AddAthleticsEntryView: View {
                 }
                 Image(systemName: "sportscourt.fill")
                     .resizable()
-                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                    .frame(width: 150, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Team/Sport", placeholder: "Enter your Team/Sport Name", inputText: $Input)
+                InputView(label: "Name of Sport", placeholder: "Enter your Sport Name", inputText: $entry.sportName)
                     .textInputAutocapitalization(.never)
                 
-                
-                Toggle("Currently a member?", isOn: $attending)
+                Toggle("Currently participating?", isOn: $attending)
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -457,32 +538,29 @@ struct AddAthleticsEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your sport", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.sportDescription)
                 
                 Button {
-                    let newEntry: AthleticsEntry
-                    if attending {
-                        newEntry = AthleticsEntry(sportName: Input, startingDate: startingDateInput, sportDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.athletics.entries.append(entry)
                     } else {
-                        newEntry = AthleticsEntry(sportName: Input, startingDate: startingDateInput, endingDate: endingDateInput, sportDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.athletics.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.athletics.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.athletics.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -490,22 +568,44 @@ struct AddAthleticsEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.athletics.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.athletics.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
 struct AddArtsEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: ArtsEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -525,17 +625,16 @@ struct AddArtsEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Performing Arts/Art", placeholder: "Enter the Performing Arts/Art name", inputText: $Input)
+                InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.artName)
                     .textInputAutocapitalization(.never)
                 
-                
-                Toggle("Currently a member?", isOn: $attending)
+                Toggle("Currently performing?", isOn: $attending)
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -544,32 +643,29 @@ struct AddArtsEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your arts", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.artDescription)
                 
                 Button {
-                    let newEntry: ArtsEntry
-                    if attending {
-                        newEntry = ArtsEntry(artName: Input, startingDate: startingDateInput, artDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.arts.entries.append(entry)
                     } else {
-                        newEntry = ArtsEntry(artName: Input, startingDate: startingDateInput, endingDate: endingDateInput, artDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.arts.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.arts.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.arts.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -577,22 +673,45 @@ struct AddArtsEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.arts.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.arts.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
+
 struct AddClubsEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: ClubsEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -612,9 +731,8 @@ struct AddClubsEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Club/Organization", placeholder: "Enter your Club/Organization Name", inputText: $Input)
+                InputView(label: "Name of Club", placeholder: "Enter your Club Name", inputText: $entry.clubName)
                     .textInputAutocapitalization(.never)
-                
                 
                 Toggle("Currently a member?", isOn: $attending)
                     .padding(.horizontal, 30)
@@ -622,7 +740,7 @@ struct AddClubsEntryView: View {
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -631,32 +749,29 @@ struct AddClubsEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your arts", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.clubDescription)
                 
                 Button {
-                    let newEntry: ClubsEntry
-                    if attending {
-                        newEntry = ClubsEntry(clubName: Input, startingDate: startingDateInput, clubDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.clubs.entries.append(entry)
                     } else {
-                        newEntry = ClubsEntry(clubName: Input, startingDate: startingDateInput, endingDate: endingDateInput, clubDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.clubs.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.clubs.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.clubs.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -664,21 +779,43 @@ struct AddClubsEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.clubs.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.clubs.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
-
 struct AddCoursesEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var term: String = ""
+    @State var entry: CoursesEntry
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -698,26 +835,27 @@ struct AddCoursesEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Course", placeholder: "Enter your Course Name", inputText: $Input)
+                InputView(label: "Name of Course", placeholder: "Enter your Course Name", inputText: $entry.courseName)
                     .textInputAutocapitalization(.never)
                 
-                InputView(label: "Term of Course", placeholder: "Ex. Semester 1, Sophmore Year", inputText: $term)
+                InputView(label: "Term", placeholder: "Enter the term of course", inputText: $entry.courseTerm)
                 
-                InputView(label: "Description", placeholder: "Enter a description of your arts", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.courseDescription)
                 
                 Button {
-                    let newEntry: CoursesEntry
-                    newEntry = CoursesEntry(courseName: Input, courseTerm: term, courseDescription: descriptionInput)
-                    
-                    viewModel.currentUserPortfolio?.courses.entries.append(newEntry)
-                    
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.courses.entries.append(entry)
+                    } else {
+                        if let identifier = viewModel.currentUserPortfolio?.courses.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.courses.entries[identifier] = entry
+                    }
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -725,22 +863,45 @@ struct AddCoursesEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.courses.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.courses.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
+
 struct AddProjectsEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: ProjectsEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -760,17 +921,16 @@ struct AddProjectsEntryView: View {
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Project", placeholder: "Enter your Project Name", inputText: $Input)
+                InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.projectName)
                     .textInputAutocapitalization(.never)
                 
-                
-                Toggle("Currently a working on the project?", isOn: $attending)
+                Toggle("Current Project?", isOn: $attending)
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -778,33 +938,30 @@ struct AddProjectsEntryView: View {
                 
                 if !attending {
                     DatePicker(
-                            "Date of Completion",
-                            selection: $endingDateInput,
+                            "End Date",
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your project", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.projectDescription)
                 
                 Button {
-                    let newEntry: ProjectsEntry
-                    if attending {
-                        newEntry = ProjectsEntry(projectName: Input, startingDate: startingDateInput, projectDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.projects.entries.append(entry)
                     } else {
-                        newEntry = ProjectsEntry(projectName: Input, startingDate: startingDateInput, endingDate: endingDateInput, projectDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.projects.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.projects.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.projects.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -812,22 +969,45 @@ struct AddProjectsEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.projects.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.projects.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
+
 struct AddCommunityServiceEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: CommunityServiceEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -842,22 +1022,21 @@ struct AddCommunityServiceEntryView: View {
                     .padding(.top, 10)
                     Spacer()
                 }
-                Image(systemName: "network")
+                Image(systemName: "square.stack.3d.up")
                     .resizable()
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Community Service", placeholder: "Enter the name of the community service", inputText: $Input)
+                InputView(label: "Name of Community Service", placeholder: "Enter your Event Name", inputText: $entry.serviceName)
                     .textInputAutocapitalization(.never)
                 
-                
-                Toggle("Ongoing Event?", isOn: $attending)
+                Toggle("Currently Volunteering?", isOn: $attending)
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -866,32 +1045,29 @@ struct AddCommunityServiceEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your community service", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.serviceDescription)
                 
                 Button {
-                    let newEntry: CommunityServiceEntry
-                    if attending {
-                        newEntry = CommunityServiceEntry(serviceName: Input, startingDate: startingDateInput, serviceDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.communityService.entries.append(entry)
                     } else {
-                        newEntry = CommunityServiceEntry(serviceName: Input, startingDate: startingDateInput, endingDate: endingDateInput, serviceDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.communityService.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.communityService.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.communityService.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -899,22 +1075,44 @@ struct AddCommunityServiceEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.communityService.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.communityService.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }
 
 struct AddWorkEntryView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State var Input: String = ""
-    @State var descriptionInput: String = ""
-    @State var startingDateInput: Date = Date()
-    @State var endingDateInput: Date = Date()
+    @State var entry: WorkExperienceEntry
     @State var attending: Bool = false
     @Binding var showSheet: Bool
+    @Binding var addOrEdit: Bool
+    @State private var isPresentingConfirm: Bool = false
     
     var body: some View {
             VStack(spacing: 20) {
@@ -929,22 +1127,21 @@ struct AddWorkEntryView: View {
                     .padding(.top, 10)
                     Spacer()
                 }
-                Image(systemName: "theatermask.and.paintbrush.fill")
+                Image(systemName: "briefcase.fill")
                     .resizable()
                     .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                     .padding(.vertical, 30)
                 
-                InputView(label: "Name of Workplace", placeholder: "Enter the workplace name", inputText: $Input)
+                InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.workplaceName)
                     .textInputAutocapitalization(.never)
                 
-                
-                Toggle("Currently an employee?", isOn: $attending)
+                Toggle("Currently an Employee?", isOn: $attending)
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 
                 DatePicker(
                         "Start Date",
-                        selection: $startingDateInput,
+                        selection: $entry.startingDate,
                         displayedComponents: [.date]
                 )
                 .padding(.horizontal, 30)
@@ -953,32 +1150,29 @@ struct AddWorkEntryView: View {
                 if !attending {
                     DatePicker(
                             "End Date",
-                            selection: $endingDateInput,
+                            selection: Binding(get: {entry.endingDate ?? Date()}, set: {entry.endingDate = $0}),
                             displayedComponents: [.date]
                     )
                     .padding(.horizontal, 30)
                     .foregroundStyle(primaryColor)
                 }
                 
-                InputView(label: "Description", placeholder: "Enter a description of your job", inputText: $descriptionInput)
+                InputView(label: "Description", placeholder: "Enter a Description", inputText: $entry.workDescription)
                 
                 Button {
-                    let newEntry: WorkExperienceEntry
-                    if attending {
-                        newEntry = WorkExperienceEntry(workplaceName: Input, startingDate: startingDateInput, workDescription: descriptionInput)
+                    if addOrEdit{
+                        viewModel.currentUserPortfolio?.workExperience.entries.append(entry)
                     } else {
-                        newEntry = WorkExperienceEntry(workplaceName: Input, startingDate: startingDateInput, endingDate: endingDateInput, workDescription: descriptionInput)
+                        if let identifier = viewModel.currentUserPortfolio?.workExperience.entries.firstIndex(where: {$0.id == entry.id}) {
+                            viewModel.currentUserPortfolio?.workExperience.entries[identifier] = entry
                     }
-                    
-                    viewModel.currentUserPortfolio?.workExperience.entries.append(newEntry)
-                    
                     Task {
                         await viewModel.updatePortfolio()
                     }
-                    
+                }
                     showSheet.toggle()
                 } label: {
-                    Text("Add")
+                    Text("Save")
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .foregroundColor(.white)
@@ -986,10 +1180,33 @@ struct AddWorkEntryView: View {
                 .background(primaryColor)
                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-                
+                .padding(.top, 20)
+                if !addOrEdit {
+                    Button{
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("Delete")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .foregroundColor(.white)
+                            .background(destructiveColor)
+                        
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.horizontal, 20)
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Delete your Entry?", role: .destructive) {
+                            if let identifier = viewModel.currentUserPortfolio?.workExperience.entries.firstIndex(where: {$0.id == entry.id}) {
+                                viewModel.currentUserPortfolio?.workExperience.entries.remove(at: identifier)
+                            }
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                            showSheet.toggle()
+                        }
+                    }
+                }
                 Spacer()
             }
-            .background(.white)
         }
 }

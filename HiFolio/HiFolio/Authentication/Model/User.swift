@@ -4,7 +4,7 @@
 //
 //  Created by Ayush Malpani on 12/19/23.
 //
-
+    
 import Foundation
 
 struct User: Identifiable, Codable {
