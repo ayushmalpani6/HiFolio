@@ -37,12 +37,6 @@ struct SettingsView: View {
             .padding(.vertical, 30)
             .padding(.horizontal, 20)
             
-//            Button {
-//                
-//            } label: {
-//                Text("Edit Name")
-//            }
-            
             Spacer()
             
             Button{

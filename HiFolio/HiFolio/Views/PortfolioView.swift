@@ -48,18 +48,6 @@ struct PortfolioView: View {
             }
           
             if showAddEntryView {
-//                    if sectionEntry != nil {
-//                        AddEducationEntryView(entryToEdit: (sectionEntry as! EducationEntry), showSheet: $showAddEntryView)
-//                            .background(colorScheme == .light ? .white : .black)
-//                            .scaleEffect(showAddEntryView ? 1 : 0.5)
-//                            .opacity(showAddEntryView ? 1 : 0)
-//                    } else {
-//                        AddEntryView(section: section, showSheet: $showAddEntryView)
-//                            .background(colorScheme == .light ? .white : .black)
-//                            .scaleEffect(showAddEntryView ? 1 : 0.5)
-//                            .opacity(showAddEntryView ? 1 : 0)
-//                    }
-                
                 VStack {
                     if section != nil {
                         if section!.title == "Education" {
