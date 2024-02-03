@@ -20,6 +20,7 @@ class Portfolio: Identifiable, ObservableObject, Codable {
     @Published var projects = ProjectsSection()
     @Published var communityService = CommunityServiceSection()
     @Published var workExperience = WorkExperienceSection()
+    @Published var sectionSelection = SectionSelection()
     
     init(uid: String) {
         self.id = uid
@@ -61,6 +62,7 @@ class Portfolio: Identifiable, ObservableObject, Codable {
         case projects
         case communityService
         case workExperience
+        case sectionSelection
     }
     
     required init(from decoder: Decoder) throws {
@@ -75,6 +77,7 @@ class Portfolio: Identifiable, ObservableObject, Codable {
         projects = try container.decode(ProjectsSection.self, forKey: .projects)
         communityService = try container.decode(CommunityServiceSection.self, forKey: .communityService)
         workExperience = try container.decode(WorkExperienceSection.self, forKey: .workExperience)
+        sectionSelection = try container.decode(SectionSelection.self, forKey: .sectionSelection)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -89,8 +92,53 @@ class Portfolio: Identifiable, ObservableObject, Codable {
         try container.encode(projects, forKey: .projects)
         try container.encode(communityService, forKey: .communityService)
         try container.encode(workExperience, forKey: .workExperience)
+        try container.encode(sectionSelection, forKey: .sectionSelection)
     }
 }
+
+class SectionTitle: Identifiable, Codable, ObservableObject {
+    var title: String
+    @Published var checked: Bool
+    var id: String { title }
+    
+    init(title: String, checked: Bool) {
+            self.title = title
+            self.checked = checked
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case title
+        case checked
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        checked = try container.decode(Bool.self, forKey: .checked)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(title, forKey: .title)
+        try container.encode(checked, forKey: .checked)
+    }
+}
+
+struct SectionSelection: Codable {
+    var sections: [SectionTitle] = [
+        SectionTitle(title: "Education", checked: false),
+        SectionTitle(title: "Awards", checked: false),
+        SectionTitle(title: "Athletics", checked: false),
+        SectionTitle(title: "Arts", checked: false),
+        SectionTitle(title: "Clubs & Organizations", checked: false),
+        SectionTitle(title: "Courses", checked: false),
+        SectionTitle(title: "Projects", checked: false),
+        SectionTitle(title: "Community Service", checked: false),
+        SectionTitle(title: "Work Experience", checked: false)
+    ]
+}
+
+
 
 // MARK: - Portfolio Sections
 

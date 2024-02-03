@@ -123,6 +123,7 @@ class AuthViewModel: ObservableObject {
                 .document(user.id)
             do {
                 try portfolioDocument.setData(from: currentUserPortfolio)
+                await fetchUser()
             } catch {
                 print("DEBUG: Failed to save Portfolio \(error.localizedDescription)")
             }
