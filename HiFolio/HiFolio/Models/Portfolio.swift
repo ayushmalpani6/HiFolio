@@ -96,10 +96,32 @@ class Portfolio: Identifiable, ObservableObject, Codable {
     }
 }
 
-struct SectionTitle: Identifiable, Codable {
+class SectionTitle: Identifiable, Codable, ObservableObject {
     var title: String
-    var checked: Bool
+    @Published var checked: Bool
     var id: String { title }
+    
+    init(title: String, checked: Bool) {
+            self.title = title
+            self.checked = checked
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case title
+        case checked
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        checked = try container.decode(Bool.self, forKey: .checked)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(title, forKey: .title)
+        try container.encode(checked, forKey: .checked)
+    }
 }
 
 struct SectionSelection: Codable {
