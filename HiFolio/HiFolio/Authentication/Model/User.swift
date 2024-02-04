@@ -12,6 +12,7 @@ struct User: Identifiable, Codable {
     let fullName: String
     let emailAddress: String
     let linkedIn: String
+    var profilePicture: String
     
     var intitials: String {
         let formatter = PersonNameComponentsFormatter()

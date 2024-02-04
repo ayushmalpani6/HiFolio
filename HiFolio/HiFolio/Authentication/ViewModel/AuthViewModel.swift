@@ -41,7 +41,7 @@ class AuthViewModel: ObservableObject {
         do {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             self.userSession = result.user
-            let user = User(id: result.user.uid, fullName: fullName, emailAddress: email, linkedIn: linkedIn)
+            let user = User(id: result.user.uid, fullName: fullName, emailAddress: email, linkedIn: linkedIn, profilePicture: "")
             let encodedUser = try Firestore.Encoder().encode(user)
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
             
@@ -121,8 +121,13 @@ class AuthViewModel: ObservableObject {
                 .firestore()
                 .collection("portfolios")
                 .document(user.id)
+            let userDocument = Firestore
+                .firestore()
+                .collection("users")
+                .document(user.id)
             do {
                 try portfolioDocument.setData(from: currentUserPortfolio)
+                try userDocument.setData(from: currentUser)
                 await fetchUser()
             } catch {
                 print("DEBUG: Failed to save Portfolio \(error.localizedDescription)")
