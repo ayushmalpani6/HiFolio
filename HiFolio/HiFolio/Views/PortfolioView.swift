@@ -116,9 +116,17 @@ struct PortfolioView: View {
                 VStack (alignment: .leading) {
                     Text(viewModel.currentUser?.fullName ?? "")
                         .font(.system(size: 14))
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 6)
+                        .foregroundStyle(.white)
                     Text(viewModel.currentUser?.emailAddress ?? "")
                         .font(.system(size: 14))
+                        .padding(.bottom, 6)
+                        .foregroundStyle(.white)
+                    if viewModel.currentUser?.linkedIn != nil && viewModel.currentUser?.linkedIn != "" {
+                        Link("LinkedIn", destination: URL(string: viewModel.currentUser?.linkedIn ?? "")!)
+                            .font(.system(size: 14))
+                            .foregroundStyle(.white)
+                    }
                 }
                 .padding(.trailing, 20)
                 .foregroundColor(secondaryColor)

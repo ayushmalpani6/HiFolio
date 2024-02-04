@@ -13,6 +13,7 @@ struct SignUpView: View {
     @State var nameInput: String = ""
     @State var passwordInput: String = ""
     @State var passwordConfirm: String = ""
+    @State var linkedInInput: String = ""
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var viewModel: AuthViewModel
     
@@ -48,9 +49,14 @@ struct SignUpView: View {
                         }
                     }
                 }
+                InputView(label: "LinkedIn Link", placeholder: "Enter the link of your LinkedIn Account / Optional Field", inputText: $linkedInInput)
                 Button{
                     Task{
-                        try await viewModel.createUser(withEmail:emailInput, password: passwordInput, fullName: nameInput)
+                        if !(linkedInInput.contains("https://www.linkedin.com/in/")) {
+                            try await viewModel.createUser(withEmail:emailInput, password: passwordInput, fullName: nameInput, linkedIn: "")
+                        } else {
+                            try await viewModel.createUser(withEmail:emailInput, password: passwordInput, fullName: nameInput, linkedIn: linkedInInput)
+                        }
                     }
                 } label: {
                     Text("Sign Up")
