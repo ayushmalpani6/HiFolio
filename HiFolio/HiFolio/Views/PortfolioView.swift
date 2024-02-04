@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 // Color scheme
 let primaryColor = Color(red: 90/255, green: 161/255, blue: 209/255)
@@ -33,6 +34,7 @@ struct PortfolioView: View {
     @State var section: SectionTitle?
     @State var sectionEntry: (any PortfolioSectionEntry)?
     @State var addEdit: Bool = false
+    @State var avatarImage: UIImage?
     
     var body: some View {
         ZStack {
@@ -109,10 +111,13 @@ struct PortfolioView: View {
     var mainBody: some View {
         ScrollView {
             HStack {
-                Image(systemName: "person")
-                    .resizable()
-                    .frame(width: 60, height: 60)
-                    .padding(20)
+                if viewModel.avatarImage != nil {
+                    Image(uiImage: viewModel.avatarImage!)
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(15)
+                        .padding(20)
+                }
                 VStack (alignment: .leading) {
                     Text(viewModel.currentUser?.fullName ?? "")
                         .font(.system(size: 14))
@@ -233,7 +238,6 @@ struct PortfolioView: View {
             SetupSheet(editMode: $editMode)
         })
     }
-    
 }
 
 struct SetupSheet: View {
@@ -365,9 +369,9 @@ struct AddEducationEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.education.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.education.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -455,9 +459,9 @@ struct AddAwardsEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.awards.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.awards.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -560,9 +564,9 @@ struct AddAthleticsEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.athletics.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.athletics.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -665,9 +669,9 @@ struct AddArtsEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.arts.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.arts.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -771,9 +775,9 @@ struct AddClubsEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.clubs.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.clubs.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -855,9 +859,9 @@ struct AddCoursesEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.courses.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.courses.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -961,9 +965,9 @@ struct AddProjectsEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.projects.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.projects.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -1067,9 +1071,9 @@ struct AddCommunityServiceEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.communityService.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.communityService.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {
@@ -1172,9 +1176,9 @@ struct AddWorkEntryView: View {
                     if let identifier = viewModel.currentUserPortfolio?.workExperience.entries.firstIndex(where: {$0.id == entry.id}) {
                         viewModel.currentUserPortfolio?.workExperience.entries[identifier] = entry
                     }
-                    Task {
-                        await viewModel.updatePortfolio()
-                    }
+                }
+                Task {
+                    await viewModel.updatePortfolio()
                 }
                 showSheet.toggle()
             } label: {

@@ -6,17 +6,33 @@
 //
 
 import SwiftUI
+import PhotosUI
+import FirebaseStorage
+import FirebaseFirestore
 
 struct SettingsView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isPresentingConfirm: Bool = false
+    @State var photosPickerItem: PhotosPickerItem?
     
     var body: some View {
         VStack {
             HStack (alignment: .top){
-                Image(systemName: "person")
-                    .resizable()
-                    .frame(width: 80, height: 80)
+                PhotosPicker(selection: $photosPickerItem, matching: .images) {
+                   if viewModel.avatarImage != nil {
+                        Image(uiImage: viewModel.avatarImage!)
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(15)
+                    } else {
+                        Image(systemName: "person")
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(15)
+                    }
+                }
+                .padding(.horizontal, 20)
+                Spacer()
                 VStack {
                     Text(viewModel.currentUser?.fullName ?? "")
                         .foregroundColor(.white)
@@ -29,12 +45,13 @@ struct SettingsView: View {
                         .padding(.horizontal, 10)
                         .fontWeight(.light)
                 }
+                .padding(.trailing, 75)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 100)
+            .frame(height: 125)
             .background(primaryColor)
             .clipShape(RoundedRectangle(cornerRadius: 10.0))
-            .padding(.vertical, 30)
+            .padding(.vertical, 40)
             .padding(.horizontal, 20)
             
             Spacer()
@@ -60,7 +77,23 @@ struct SettingsView: View {
                     viewModel.deleteAccount()
                 }
             }
-
+            
+        }
+        .onChange(of: photosPickerItem) { _, _ in
+            Task {
+                if let photosPickerItem {
+                    let data = try? await photosPickerItem.loadTransferable(type: Data.self)
+                    if let data {
+                        if let image = UIImage(data: data) {
+                            viewModel.uploadPhoto(profileImage: image)
+                            viewModel.avatarImage = image
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
