@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 import FirebaseStorage
+import FirebaseFirestore
 
 struct SettingsView: View {
     @EnvironmentObject var viewModel: AuthViewModel
@@ -19,15 +20,16 @@ struct SettingsView: View {
         VStack {
             HStack (alignment: .top){
                 PhotosPicker(selection: $photosPickerItem, matching: .images) {
-                        if let avatarImage = avatarImage {
-                            Image(uiImage: avatarImage)
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                        } else {
-                            Image(systemName: "person")
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                        }
+                    if viewModel.avatarImage != nil {
+                        Image(uiImage: viewModel.avatarImage!)
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            
+                    } else {
+                        Image(systemName: "person")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                    }
                 }
                 VStack {
                     Text(viewModel.currentUser?.fullName ?? "")
@@ -49,9 +51,13 @@ struct SettingsView: View {
             .padding(.vertical, 30)
             .padding(.horizontal, 20)
             
-            if avatarImage != nil {
+            if avatarImage != UIImage(systemName: "person"){
                 Button {
                     uploadPhoto()
+                    Task {
+                        viewModel.retrievePhoto()
+                        await viewModel.updatePortfolio()
+                    }
                 } label: {
                     Text("Confirm Profile Picture")
                 }
@@ -104,10 +110,20 @@ struct SettingsView: View {
         let fileRef = storageRef.child("Images/\(viewModel.currentUser!.id).jpeg")
         let uploadTask = fileRef.putData(imageData!, metadata: nil) { metadata, error in
             if error != nil && metadata != nil{
-                viewModel.currentUser?.profilePicture = "Images/\(viewModel.currentUser!.id).jpeg"
                 Task {
+                    viewModel.retrievePhoto()
                     await viewModel.updatePortfolio()
                 }
+            }
+        }
+    }
+    
+    func retrievePhoto() {
+        let storageRef = Storage.storage().reference()
+        let fileRef = storageRef.child(viewModel.currentUser!.profilePicture)
+        fileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
+            if error == nil && data != nil{
+                viewModel.avatarImage = UIImage(data: data!)!
             }
         }
     }
