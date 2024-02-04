@@ -13,24 +13,26 @@ import FirebaseFirestore
 struct SettingsView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var isPresentingConfirm: Bool = false
-    @State var avatarImage: UIImage?
     @State var photosPickerItem: PhotosPickerItem?
     
     var body: some View {
         VStack {
             HStack (alignment: .top){
                 PhotosPicker(selection: $photosPickerItem, matching: .images) {
-                    if viewModel.avatarImage != nil {
+                   if viewModel.avatarImage != nil {
                         Image(uiImage: viewModel.avatarImage!)
                             .resizable()
-                            .frame(width: 80, height: 80)
-                            
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(15)
                     } else {
                         Image(systemName: "person")
                             .resizable()
-                            .frame(width: 80, height: 80)
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(15)
                     }
                 }
+                .padding(.horizontal, 20)
+                Spacer()
                 VStack {
                     Text(viewModel.currentUser?.fullName ?? "")
                         .foregroundColor(.white)
@@ -43,25 +45,15 @@ struct SettingsView: View {
                         .padding(.horizontal, 10)
                         .fontWeight(.light)
                 }
+                .padding(.trailing, 75)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 100)
+            .frame(height: 125)
             .background(primaryColor)
             .clipShape(RoundedRectangle(cornerRadius: 10.0))
-            .padding(.vertical, 30)
+            .padding(.vertical, 40)
             .padding(.horizontal, 20)
             
-            if avatarImage != UIImage(systemName: "person"){
-                Button {
-                    uploadPhoto()
-                    Task {
-                        viewModel.retrievePhoto()
-                        await viewModel.updatePortfolio()
-                    }
-                } label: {
-                    Text("Confirm Profile Picture")
-                }
-            }
             Spacer()
             
             Button{
@@ -93,37 +85,14 @@ struct SettingsView: View {
                     let data = try? await photosPickerItem.loadTransferable(type: Data.self)
                     if let data {
                         if let image = UIImage(data: data) {
-                            avatarImage = image
+                            viewModel.uploadPhoto(profileImage: image)
+                            viewModel.avatarImage = image
+                            Task {
+                                await viewModel.updatePortfolio()
+                            }
                         }
                     }
                 }
-            }
-        }
-    }
-    
-    func uploadPhoto() {
-        let storageRef = Storage.storage().reference()
-        let imageData = avatarImage!.jpegData(compressionQuality: 0.8)
-        guard imageData != nil else {
-            return
-        }
-        let fileRef = storageRef.child("Images/\(viewModel.currentUser!.id).jpeg")
-        let uploadTask = fileRef.putData(imageData!, metadata: nil) { metadata, error in
-            if error != nil && metadata != nil{
-                Task {
-                    viewModel.retrievePhoto()
-                    await viewModel.updatePortfolio()
-                }
-            }
-        }
-    }
-    
-    func retrievePhoto() {
-        let storageRef = Storage.storage().reference()
-        let fileRef = storageRef.child(viewModel.currentUser!.profilePicture)
-        fileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
-            if error == nil && data != nil{
-                viewModel.avatarImage = UIImage(data: data!)!
             }
         }
     }

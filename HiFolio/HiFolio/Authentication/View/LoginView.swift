@@ -34,21 +34,8 @@ struct LoginView: View  {
                           isSecureField: true)
                 .textInputAutocapitalization(.never)
                 
-                // forgot password button
-                Button {
-                    print("Trying to remember...")
-                } label: {
-                    HStack {
-                        Spacer()
-                        Text("Forgot Password?")
-                            .foregroundStyle(primaryColor)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.top, 10)
-                    .padding(.horizontal, 20)
-                }
                 
-                // sign in button
+                // MARK- sign in button
                 
                 Button {
                     Task {

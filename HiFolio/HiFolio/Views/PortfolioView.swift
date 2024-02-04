@@ -114,7 +114,8 @@ struct PortfolioView: View {
                 if viewModel.avatarImage != nil {
                     Image(uiImage: viewModel.avatarImage!)
                         .resizable()
-                        .frame(width: 60, height: 60)
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(15)
                         .padding(20)
                 }
                 VStack (alignment: .leading) {

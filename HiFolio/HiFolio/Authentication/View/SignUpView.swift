@@ -49,7 +49,7 @@ struct SignUpView: View {
                         }
                     }
                 }
-                InputView(label: "LinkedIn Link", placeholder: "Enter the link of your LinkedIn Account / Optional Field", inputText: $linkedInInput)
+                InputView(label: "LinkedIn Link", placeholder: "Enter the link / Optional Field", inputText: $linkedInInput)
                 Button{
                     Task{
                         if !(linkedInInput.contains("https://www.linkedin.com/in/")) {

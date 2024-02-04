@@ -27,7 +27,7 @@ class AuthViewModel: ObservableObject {
         self.userSession = Auth.auth().currentUser
         Task {
             await fetchUser()
-            if userSession != nil {
+            if currentUser != nil && userSession != nil {
                 retrievePhoto()
             }
         }
@@ -49,17 +49,7 @@ class AuthViewModel: ObservableObject {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             self.userSession = result.user
             let user = User(id: result.user.uid, fullName: fullName, emailAddress: email, linkedIn: linkedIn, profilePicture: "Images/\(result.user.uid).jpeg")
-            let storageRef = Storage.storage().reference()
-            let imageData = defaultImage.jpegData(compressionQuality: 0.8)
-            guard imageData != nil else {
-                return
-            }
-            let fileRef = storageRef.child("Images/\(result.user.uid).jpeg")
-            let uploadTask = fileRef.putData(imageData!, metadata: nil) { metadata, error in
-                if error != nil && metadata != nil{
-                    
-                }
-            }
+            uploadPhoto(profileImage: defaultImage)
             let encodedUser = try Firestore.Encoder().encode(user)
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
             
@@ -159,4 +149,22 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func uploadPhoto(profileImage: UIImage) {
+        let storageRef = Storage.storage().reference()
+        let imageData = profileImage.jpegData(compressionQuality: 0.8)
+        guard imageData != nil else {
+            return
+        }
+        let fileRef = storageRef.child("Images/\(currentUser!.id).jpeg")
+        let uploadTask = fileRef.putData(imageData!, metadata: nil) { metadata, error in
+            if error != nil && metadata != nil{
+                Task {
+                    //self.retrievePhoto()
+                    self.avatarImage = UIImage(data: imageData!)
+                    await self.updatePortfolio()
+                }
+            }
+        }
+    }
+
 }
