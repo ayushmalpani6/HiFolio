@@ -55,22 +55,39 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
             
             Spacer()
-            
+            Link("Report Issue", destination: URL(string: "https://forms.gle/SaT617ASR7jbynnL7")!)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .foregroundColor(.white)
+                .background(primaryColor)
+                .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                .padding(.horizontal, 20)
             Button{
                 viewModel.signOut()
             } label: {
-                Text("SIGN OUT")
-                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                    .foregroundColor(primaryColor)
+                Text("Sign Out")
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(.white)
+                    .background(primaryColor)
+                
             }
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+            .padding(.horizontal, 20)
             
             Button{
                 isPresentingConfirm = true
             } label: {
                 Text("DELETE ACCOUNT")
-                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                    .foregroundColor(primaryColor)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .foregroundColor(.white)
+                    .background(destructiveColor)
+                
             }
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+            .padding(.horizontal, 20)
+            .padding(.bottom, 50)
             .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
                 Button("Delete your Account?", role: .destructive) {
                     viewModel.deleteData()
