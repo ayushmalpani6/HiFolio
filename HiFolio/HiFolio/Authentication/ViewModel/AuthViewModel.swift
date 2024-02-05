@@ -145,7 +145,7 @@ class AuthViewModel: ObservableObject {
         fileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
             if error == nil && data != nil{
                 self.avatarImage = UIImage(data: data!)!
-            }
+            }   
         }
     }
     
