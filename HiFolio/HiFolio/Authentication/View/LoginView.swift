@@ -16,9 +16,9 @@ struct LoginView: View  {
     var body: some View {
         NavigationStack {
             VStack{
-                Image(systemName: "person")
+                Image("Logo")
                     .resizable()
-                    .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                    .frame(width: 150, height: 150)
                     .padding(.vertical, 40)
                 
                 // form field

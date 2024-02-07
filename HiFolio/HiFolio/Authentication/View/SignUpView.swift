@@ -20,9 +20,9 @@ struct SignUpView: View {
     var body: some View {
         NavigationStack{
             VStack (spacing: 20){
-                Image(systemName: "person")
+                Image("Logo")
                     .resizable()
-                    .frame(width: 100, height: 100)
+                    .frame(width: 150, height: 150)
                     .padding(.vertical, 40)
                 InputView(label: "Email Address", placeholder: "example@email.com", inputText: $emailInput)
                     .textInputAutocapitalization(.never)
