@@ -17,18 +17,6 @@ struct PortfolioView: View {
     @Environment (\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
-    //    @State var sections: [SectionTitle] = [
-    //        SectionTitle(title: "Education", checked: false),
-    //        SectionTitle(title: "Awards", checked: false),
-    //        SectionTitle(title: "Athletics", checked: false),
-    //        SectionTitle(title: "Arts", checked: false),
-    //        SectionTitle(title: "Clubs & Organizations", checked: false),
-    //        SectionTitle(title: "Courses", checked: false),
-    //        SectionTitle(title: "Projects", checked: false),
-    //        SectionTitle(title: "Community Service", checked: false),
-    //        SectionTitle(title: "Work Experience", checked: false)
-    //    ]
-    
     @State var showAddEntryView: Bool = false
     @State var editMode: Bool = true
     @State var section: SectionTitle?
@@ -117,6 +105,12 @@ struct PortfolioView: View {
                         .frame(width: 100, height: 100)
                         .cornerRadius(15)
                         .padding(20)
+                } else {
+                    Image(uiImage: viewModel.defaultImage)
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(15)
+                        .padding(20)
                 }
                 VStack (alignment: .leading) {
                     Text(viewModel.currentUser?.fullName ?? "")
@@ -160,10 +154,12 @@ struct PortfolioView: View {
                                         if viewModel.currentUserPortfolio != nil {
                                             ForEach(viewModel.currentUserPortfolio!.getSectionEntries(sectionTitle: section.title), id: \.id) { entry in
                                                 Button {
-                                                    self.section = section
-                                                    self.sectionEntry = entry
-                                                    addEdit = false
-                                                    self.showAddEntryView.toggle()
+                                                    if editMode {
+                                                        self.section = section
+                                                        self.sectionEntry = entry
+                                                        addEdit = false
+                                                        self.showAddEntryView.toggle()
+                                                    }
                                                 } label: {
                                                     HStack {
                                                         VStack(alignment: .leading) {
@@ -191,7 +187,7 @@ struct PortfolioView: View {
                                             Button {
                                                 self.section = section
                                                 if section.title == "Education" {
-                                                    self.sectionEntry = EducationEntry(schoolName: "", startingDate: Date(), endingDate: Date(), gpa: "")
+                                                    self.sectionEntry = EducationEntry(schoolName: "", startingDate: Date(), gpa: "")
                                                 } else if section.title == "Awards" {
                                                     self.sectionEntry = AwardsEntry(awardName: "", awardDate: Date(), awardDescription: "")
                                                 } else if section.title == "Athletics" {
@@ -336,7 +332,6 @@ struct AddEducationEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of School", placeholder: "Enter your School Name", inputText: $entry.schoolName)
-                .textInputAutocapitalization(.never)
             
             Toggle("Currently attending this school?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -440,10 +435,9 @@ struct AddAwardsEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Award", placeholder: "Enter your Award Name", inputText: $entry.awardName)
-                .textInputAutocapitalization(.never)
             
             DatePicker(
-                "Start Date",
+                "Date",
                 selection: $entry.awardDate,
                 displayedComponents: [.date]
             )
@@ -531,7 +525,6 @@ struct AddAthleticsEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Sport", placeholder: "Enter your Sport Name", inputText: $entry.sportName)
-                .textInputAutocapitalization(.never)
             
             Toggle("Currently participating?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -636,7 +629,6 @@ struct AddArtsEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.artName)
-                .textInputAutocapitalization(.never)
             
             Toggle("Currently performing?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -742,7 +734,6 @@ struct AddClubsEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Club", placeholder: "Enter your Club Name", inputText: $entry.clubName)
-                .textInputAutocapitalization(.never)
             
             Toggle("Currently a member?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -846,7 +837,6 @@ struct AddCoursesEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Course", placeholder: "Enter your Course Name", inputText: $entry.courseName)
-                .textInputAutocapitalization(.never)
             
             InputView(label: "Term", placeholder: "Enter the term of course", inputText: $entry.courseTerm)
             
@@ -931,8 +921,7 @@ struct AddProjectsEntryView: View {
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                 .padding(.vertical, 30)
             
-            InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.projectName)
-                .textInputAutocapitalization(.never)
+            InputView(label: "Name of Project", placeholder: "Enter your Project Name", inputText: $entry.projectName)
             
             Toggle("Current Project?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -1038,7 +1027,6 @@ struct AddCommunityServiceEntryView: View {
                 .padding(.vertical, 30)
             
             InputView(label: "Name of Community Service", placeholder: "Enter your Event Name", inputText: $entry.serviceName)
-                .textInputAutocapitalization(.never)
             
             Toggle("Currently Volunteering?", isOn: $attending)
                 .padding(.horizontal, 30)
@@ -1142,8 +1130,7 @@ struct AddWorkEntryView: View {
                 .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
                 .padding(.vertical, 30)
             
-            InputView(label: "Name of Arts", placeholder: "Enter your Arts Name", inputText: $entry.workplaceName)
-                .textInputAutocapitalization(.never)
+            InputView(label: "Name of Employer", placeholder: "Enter the name of your Employer", inputText: $entry.workplaceName)
             
             Toggle("Currently an Employee?", isOn: $attending)
                 .padding(.horizontal, 30)

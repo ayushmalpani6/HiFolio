@@ -49,7 +49,6 @@ class AuthViewModel: ObservableObject {
             let result = try await Auth.auth().createUser(withEmail: email, password: password)
             self.userSession = result.user
             let user = User(id: result.user.uid, fullName: fullName, emailAddress: email, linkedIn: linkedIn, profilePicture: "Images/\(result.user.uid).jpeg")
-            uploadPhoto(profileImage: defaultImage)
             let encodedUser = try Firestore.Encoder().encode(user)
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
             
@@ -57,6 +56,7 @@ class AuthViewModel: ObservableObject {
             let encodedPortfolio = try Firestore.Encoder().encode(portfolio)
             try await Firestore.firestore().collection("portfolios").document(user.id).setData(encodedPortfolio)
             await fetchUser()
+            uploadPhoto(profileImage: defaultImage)
             retrievePhoto()
         } catch {
             print("DEBUG: FAILED TO CREATE USER \(error.localizedDescription)")

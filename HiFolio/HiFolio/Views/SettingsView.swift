@@ -25,34 +25,35 @@ struct SettingsView: View {
                             .frame(width: 100, height: 100)
                             .cornerRadius(15)
                     } else {
-                        Image(systemName: "person")
+                        Image(uiImage: viewModel.defaultImage)
                             .resizable()
                             .frame(width: 100, height: 100)
                             .cornerRadius(15)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.leading, 20)
+                .padding(.trailing, 7.5)
                 Spacer()
                 VStack {
                     Text(viewModel.currentUser?.fullName ?? "")
                         .foregroundColor(.white)
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 7.5)
                         .padding(.top, 10)
                     
                     Text(viewModel.currentUser?.emailAddress ?? "")
                         .foregroundColor(.white)
                         .padding(.top, 10)
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 7.5)
                         .fontWeight(.light)
                 }
-                .padding(.trailing, 75)
+                .padding(.trailing, 7.5)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 125)
             .background(primaryColor)
             .clipShape(RoundedRectangle(cornerRadius: 10.0))
             .padding(.vertical, 40)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 10)
             
             Spacer()
             Link("Report Issue", destination: URL(string: "https://forms.gle/SaT617ASR7jbynnL7")!)
@@ -115,23 +116,6 @@ struct SettingsView: View {
     }
 }
 
-//struct ChangeSheet: View {
-//    @Environment(\.presentationMode) var presentationMode
-//    @State var emailInput: String = ""
-//    @State var nameInput: String = ""
-//    @EnvironmentObject var viewModel: AuthViewModel
-//    
-//    var body: some View {
-//        VStack(alignment: .trailing) {
-//            InputView(label: "Email Address", placeholder: viewModel.currentUser?.fullName ?? "nil", inputText: $emailInput)
-//                .textInputAutocapitalization(.never)
-//            InputView(label: "Full Name", placeholder: viewModel.currentUser?.fullName ?? "nil", inputText: $nameInput)
-//            
-//            
-//            
-//        }
-//    }
-//}
 
 #Preview {
     SettingsView()
