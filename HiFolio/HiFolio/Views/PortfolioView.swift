@@ -17,18 +17,6 @@ struct PortfolioView: View {
     @Environment (\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: AuthViewModel
     @State var showSetupSheet: Bool = false
-    //    @State var sections: [SectionTitle] = [
-    //        SectionTitle(title: "Education", checked: false),
-    //        SectionTitle(title: "Awards", checked: false),
-    //        SectionTitle(title: "Athletics", checked: false),
-    //        SectionTitle(title: "Arts", checked: false),
-    //        SectionTitle(title: "Clubs & Organizations", checked: false),
-    //        SectionTitle(title: "Courses", checked: false),
-    //        SectionTitle(title: "Projects", checked: false),
-    //        SectionTitle(title: "Community Service", checked: false),
-    //        SectionTitle(title: "Work Experience", checked: false)
-    //    ]
-    
     @State var showAddEntryView: Bool = false
     @State var editMode: Bool = true
     @State var section: SectionTitle?
